@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pendulum Quiz — VirtuLab{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="mb-3 fw-800" style="color:var(--brand)">Pendulum — Quick Quiz</h1>
+
+    <style>
+      .question { padding: .85rem; border: 1px solid rgba(255,255,255,0.03); border-radius: .5rem; margin-bottom: .8rem; }
+      .question .question-text { font-size: 1.12rem; font-weight: 700; margin-bottom: .45rem; color: var(--txt); }
+      .question .answers label { font-size: .96rem; margin-left: .25rem; display: block; padding: .4rem .55rem; border-radius: .35rem; }
+      .question .answers { padding-left: .45rem; }
+      .question .answers label.selected { background: rgba(34,197,94,.12); color: #eaffef; border-left: 3px solid var(--brand-2); }
+      .question .answers input[type="radio"] { accent-color: var(--brand); margin-right: .6rem; }
+      .question .answers label .answer-text { vertical-align: middle; }
+      .question.unanswered { box-shadow: 0 0 0 3px rgba(255,0,0,.06) inset, 0 0 0 1px rgba(255,80,80,.12); border-left: 3px solid rgba(255,100,100,.9); }
+    </style>
+
+    <div id="quiz-container"></div>
+
+    <div class="d-flex gap-2 mt-3">
+      <button id="submit-btn" class="btn btn-brand" disabled>Send answers</button>
+      <button id="clear-btn" class="btn btn-outline-brand">Clear</button>
+    </div>
+
+    <h3 class="mt-4 text-muted-2">Feedback</h3>
+    <pre id="feedback">(no feedback yet)</pre>
+  </div>
+
+  <script>
+    window.__embeddedQuiz = {
+      title: "Pendulum Basics (5 questions)",
+      questions: [
+        { id: 1, text: "What is the defining characteristic of a simple pendulum?", answers: [ {text: "A heavy bob attached to a flexible, weightless string"}, {text: "A bob attached to a rigid rod"}, {text: "A pendulum with a long string"}, {text: "A pendulum with a large amplitude"} ] },
+        { id: 2, text: "The period of a simple pendulum depends primarily on which of the following?", answers: [ {text: "Mass of the bob"}, {text: "Length of the string"}, {text: "Amplitude of swing"}, {text: "Color of the bob"} ] },
+        { id: 3, text: "What is the formula for calculating the time period of a simple pendulum for small oscillations?", answers: [ {text: "The period equals 2 times pi times the square root of the length divided by gravity"}, {text: "The period equals length divided by gravity times 2 times pi"}, {text: "The period is independent of length and gravity"}, {text: "The period equals gravity times length divided by 2 pi"} ] },
+        { id: 4, text: "What happens to the period of a pendulum if the length of the string is quadrupled?", answers: [ {text: "It halves"}, {text: "It doubles"}, {text: "It quadruples"}, {text: "It remains the same"} ] },
+        { id: 5, text: "When a pendulum swings with a small amplitude, which energy transformations occur during its motion?", answers: [ {text: "Kinetic energy to potential energy and back"}, {text: "Potential energy to heat energy"}, {text: "Kinetic energy to sound energy"}, {text: "No energy transformation occurs"} ] }
+      ]
+    };
+  </script>
+
+  <script src="{% static 'js/quiz.js' %}"></script>
+{% endblock %}

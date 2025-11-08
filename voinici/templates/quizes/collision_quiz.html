@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Collision Quiz — VirtuLab{% endblock %}
+
+{% block content %}
+	<div class="container">
+			<h1 class="mb-3 fw-800" style="color:var(--brand)">Collisions — Quick Quiz</h1>
+
+				<style>
+					/* Make question text stand out from answers */
+					.question { padding: .85rem; border: 1px solid rgba(255,255,255,0.03); border-radius: .5rem; margin-bottom: .8rem; }
+					.question .question-text { font-size: 1.12rem; font-weight: 700; margin-bottom: .45rem; color: var(--txt); }
+					.question .answers label { font-size: .96rem; margin-left: .25rem; display: block; padding: .4rem .55rem; border-radius: .35rem; }
+					/* Slightly indent answers for clarity */
+					.question .answers { padding-left: .45rem; }
+
+					/* Selected state styling: green background and accent dot */
+					.question .answers label.selected { background: rgba(34,197,94,.12); color: #eaffef; border-left: 3px solid var(--brand-2); }
+					.question .answers input[type="radio"] { accent-color: var(--brand); margin-right: .6rem; }
+					.question .answers label .answer-text { vertical-align: middle; }
+							/* Unanswered marker */
+							.question.unanswered { box-shadow: 0 0 0 3px rgba(255,0,0,.06) inset, 0 0 0 1px rgba(255,80,80,.12); border-left: 3px solid rgba(255,100,100,.9); }
+				</style>
+
+		<div id="quiz-container">
+			<!-- JS will render the quiz here (prefers embedded quiz) -->
+		</div>
+
+		<div class="d-flex gap-2 mt-3">
+			<button id="submit-btn" class="btn btn-brand" disabled>Send answers</button>
+			<button id="clear-btn" class="btn btn-outline-brand">Clear</button>
+		</div>
+
+		<h3 class="mt-4 text-muted-2">Feedback</h3>
+		<pre id="feedback">(no feedback yet)</pre>
+	</div>
+
+	<script>
+		// Embedded quiz data — uses the site's font/colors via home.css
+		window.__embeddedQuiz = {
+			title: "Collisions and Momentum (5 questions)",
+			questions: [
+				{ id: 1, text: "Two identical carts collide elastically on a frictionless track. Which quantity is conserved for the whole system?", answers: [ {text: "Kinetic energy only"}, {text: "Momentum only"}, {text: "Both momentum and kinetic energy"}, {text: "Neither"} ] },
+				{ id: 2, text: "A small ball hits a large stationary ball and sticks to it (perfectly inelastic). What happens to the total kinetic energy?", answers: [ {text: "It increases"}, {text: "It stays the same"}, {text: "It decreases"}, {text: "Becomes zero"} ] },
+				{ id: 3, text: "In a closed two-body system with no external forces, which of these is always true after a collision?", answers: [ {text: "Total momentum is the same as before"}, {text: "Total kinetic energy is the same as before"}, {text: "Each object's speed is unchanged"}, {text: "Center of mass stops moving"} ] },
+				{ id: 4, text: "An elastic head-on collision between two unequal masses results in which behaviour for the lighter mass?", answers: [ {text: "Always keeps moving in same direction"}, {text: "May reverse direction"}, {text: "Always stops"}, {text: "Becomes stationary"} ] },
+				{ id: 5, text: "Which collision type conserves kinetic energy (assuming no external forces)?", answers: [ {text: "Perfectly inelastic"}, {text: "Partially elastic"}, {text: "Elastic"}, {text: "Explosive"} ] }
+			]
+		};
+	</script>
+
+	<script src="{% static 'js/quiz.js' %}"></script>
+{% endblock %}
