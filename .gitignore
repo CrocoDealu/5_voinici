@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+*.pyo
+*.pyd
+*.pdb
+*.db
+
+# Virtual environment
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django specific
+*.log
+db.sqlite3
+media/
+staticfiles/
+tmp/
+*.pot
+*.py,cover
+
+# VSCode & IDE stuff
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Node (if you add React later)
+node_modules/
+npm-debug.log
+yarn-error.log
+build/
+dist/
