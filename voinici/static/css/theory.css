@@ -144,3 +144,135 @@ kbd{
   background:#0c140f; border:1px solid var(--line);
   border-bottom-color:#060a07; border-radius:.4rem; padding:.1rem .35rem;
 }
+
+
+/*Simulation part of theory*/
+
+
+
+                                                                                  /* PENDULUM */
+.theory-footer-anim {
+  margin-top: 32px;
+}
+.anim-card{
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 28px 16px 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  display: grid;
+  place-items: center;
+}
+.anim-caption{
+  margin: 10px 0 0;
+  font-size: .9rem;
+  color: rgba(255,255,255,.65);
+  text-align: center;
+  letter-spacing:.2px;
+}
+.pendulum{
+  position: relative;
+  width: 220px;
+  height: 180px;
+  transform-origin: top center;
+  animation: swing 3.2s ease-in-out infinite;
+}
+@keyframes swing{
+  0% { transform: rotate(-9deg); }
+  50%{ transform: rotate(9deg); }
+  100%{ transform: rotate(-9deg); }
+}
+.pivot{
+  width:10px; height:10px; border-radius:50%;
+  background:#18ffa3; margin:0 auto 4px;
+  box-shadow: 0 0 12px #18ffa3aa;
+}
+.rod{
+  position:absolute; top:10px; left:50%;
+  width:2px; height:120px; transform:translateX(-50%);
+  background: linear-gradient(#18ffa3,#0ea86f);
+  box-shadow: 0 0 10px #18ffa366 inset;
+}
+.bob{
+  position:absolute; top:120px; left:50%;
+  width:26px; height:26px; transform:translateX(-50%);
+  border-radius:50%;
+  background:#18ffa3;
+  box-shadow: 0 0 20px #18ffa3aa, inset 0 0 12px rgba(0,0,0,.35);
+}
+
+
+
+
+                                                                                            /* INCLINED_PLANE */
+.ip-wrap{ height: 200px }
+.ip-plane{
+  position:relative;
+  width: 460px; height: 8px;
+  background: #18ffa3;
+  box-shadow: 0 0 10px #18ffa3aa;
+  transform: rotate(-16deg);
+  border-radius: 3px;
+}
+.ip-plane::before{
+  content:"";
+  position:absolute; left:-40px; top:0;
+  width:40px; height:100%; background:linear-gradient(90deg,#18ffa366,transparent);
+}
+.ip-plane::after{
+  content:"";
+  position:absolute; right:-40px; top:0;
+  width:40px; height:100%; background:linear-gradient(270deg,#18ffa366,transparent);
+}
+.ip-block{
+  position:absolute; top:-14px; left:-24px;
+  width:28px; height:28px; border-radius:6px;
+  background:#e3ffe0;
+  box-shadow: 0 0 14px #18ffa388, inset 0 0 10px rgba(0,0,0,.25);
+  animation: slideBlock 3.8s ease-in-out infinite;
+}
+@keyframes slideBlock{
+  0%   { transform: translateX(0) translateY(0); opacity:.85 }
+  40%  { transform: translateX(360px) translateY(0); opacity:1 }
+  50%  { transform: translateX(360px) translateY(0); opacity:0 }
+  60%  { transform: translateX(0) translateY(0); opacity:0 }
+  100% { transform: translateX(0) translateY(0); opacity:.85 }
+}
+
+
+
+                                                                                      /* COLLISON ANIMATION */
+.coll-wrap{ height: 180px }
+.track{
+  position: relative; width: 520px; height: 4px; margin: 40px auto 28px;
+  background:#18ffa3; box-shadow: 0 0 10px #18ffa3aa; border-radius: 2px;
+}
+.ball{
+  position:absolute; top:50%; width:26px; height:26px; margin-top:-13px;
+  border-radius:50%; background:#e3ffe0;
+  box-shadow: 0 0 16px #18ffa388, inset 0 0 10px rgba(0,0,0,.25);
+}
+.ball-left{
+  left: 10px;
+  animation: leftMover 3.6s cubic-bezier(.4,0,.2,1) infinite;
+}
+.ball-right{
+  right: 10px;
+  animation: rightMover 3.6s cubic-bezier(.4,0,.2,1) infinite;
+}
+@keyframes leftMover{
+  0%   { transform: translateX(0) }
+  45%  { transform: translateX(230px) }    /* impact zone */
+  50%  { transform: translateX(230px) }
+  95%  { transform: translateX(0) }
+  100% { transform: translateX(0) }
+}
+@keyframes rightMover{
+  0%   { transform: translateX(0) }
+  45%  { transform: translateX(-230px) }   /* impact zone */
+  50%  { transform: translateX(-230px) }
+  95%  { transform: translateX(0) }
+  100% { transform: translateX(0) }
+}

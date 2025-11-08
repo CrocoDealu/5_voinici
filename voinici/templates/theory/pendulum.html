@@ -1,6 +1,7 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <title>VirtuLab — Pendulum Theory</title>
@@ -17,9 +18,15 @@
 
   <!-- Safety: remove list bullets if any custom CSS interferes -->
   <style>
-    .navbar-nav, .navbar-nav li { list-style: none; padding-left: 0; margin: 0; }
+    .navbar-nav,
+    .navbar-nav li {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
   </style>
 </head>
+
 <body class="bg-black text-light">
 
   <!-- Starfield background -->
@@ -31,7 +38,7 @@
       <a class="navbar-brand fw-bold brand" href="/">VirtuLab</a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-              aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -114,7 +121,8 @@
       <div class="formula">theta(t) = A cos( sqrt(g/L) * t + phi )</div>
       <p>The oscillation period is (approximately) independent of amplitude:</p>
       <div class="formula">T = 2 pi sqrt( L / g )</div>
-      <p>Consequences: mass does not appear in the period; doubling <em>L</em> scales <em>T</em> by <em>sqrt(2)</em>.</p>
+      <p>Consequences: mass does not appear in the period; doubling <em>L</em> scales <em>T</em> by <em>sqrt(2)</em>.
+      </p>
     </section>
 
     <section class="section">
@@ -143,7 +151,8 @@
       <p>With weak drag (proportional to angular velocity), the equation becomes:</p>
       <div class="formula">theta'' + 2 beta theta' + (g/L) sin(theta) = 0</div>
       <p>
-        For small angles and small <em>beta</em>, the amplitude decays exponentially while the period changes only slightly.
+        For small angles and small <em>beta</em>, the amplitude decays exponentially while the period changes only
+        slightly.
       </p>
     </section>
 
@@ -167,10 +176,25 @@
     </section>
   </main>
 
+
+  <!-- Pendul animation -->
+  <section class="theory-footer-anim">
+    <div class="anim-card">
+      <div class="pendulum">
+        <div class="pivot"></div>
+        <div class="rod"></div>
+        <div class="bob"></div>
+      </div>
+      <p class="anim-caption">Small oscillations — period ~ 2π√(L/g)</p>
+    </div>
+  </section>
+
+
   <footer class="py-4"></footer>
 
   <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/home.js' %}"></script>
 </body>
+
 </html>
