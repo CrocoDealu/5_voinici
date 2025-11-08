@@ -8,10 +8,12 @@ class Answer(BaseModel):
 
 
 class Question(BaseModel):
+    """Simplified question representation for submissions: only id and the user's answer index.
+
+    The correct answers are stored separately in `answers_key.json` and looked up by id.
+    """
     id: int
-    question_text: str
-    answers: List[Answer] = Field(..., min_length=4, max_length=4)
-    user_answer_index: Optional[int] = None
+    user_answer: Optional[int] = None
 
 
 class Quiz(BaseModel):
@@ -32,17 +34,18 @@ class FeedbackResponse(BaseModel):
 
 class AnswerSubmission(BaseModel):
     question_id: int
-    user_answer_index: Optional[int] = None
+    # index of the user's selected answer (0-based). Use null if unanswered.
+    user_answer: Optional[int] = None
 
 
 class QuizAttempt(BaseModel):
-    """Simplified submission: reference questions by ID and provide user's answer index.
+        """Trimitere simplificată: referință la întrebări prin ID și indexul răspunsului utilizatorului.
 
-    Example:
-    {
-      "title": "Collisions and Momentum",       # optional, used to pick which mock quiz
-      "answers": [ {"question_id": 1, "user_answer_index": 2}, ... ]
-    }
-    """
-    title: Optional[str] = None
-    answers: List[AnswerSubmission]
+        Exemplu:
+        {
+            "title": "Coliziuni și impuls",       # opțional, folosit pentru a selecta testul mock
+            "answers": [ {"question_id": 1, "user_answer": 2}, ... ]
+        }
+        """
+        title: Optional[str] = None
+        answers: List[AnswerSubmission]

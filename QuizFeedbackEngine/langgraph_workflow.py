@@ -4,6 +4,8 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 import os
 from models import Quiz
+import json
+import pathlib
 
 
 class QuizState(TypedDict):
@@ -20,27 +22,36 @@ def analyze_quiz(state: QuizState) -> QuizState:
     quiz = state["quiz"]
     
     if not quiz.questions or len(quiz.questions) == 0:
-        state["analysis"] = "Error: Quiz has no questions"
+        state["analysis"] = "Eroare: testul nu conține întrebări"
         state["score"] = 0
         state["total_questions"] = 0
         state["question_details"] = []
         return state
     
+    # Load canonical answers from answers_key.json (mapping question_id -> correct answer index)
+    answers_file = pathlib.Path(__file__).resolve().parent / "answers_key.json"
+    try:
+        with open(answers_file, "r", encoding="utf-8") as fh:
+            answer_key = json.load(fh)
+    except Exception:
+        # If key file missing or unreadable, fall back to empty key (no correct answers)
+        answer_key = {}
+
     correct_count = 0
     question_details = []
-    
+
     for question in quiz.questions:
-        is_correct = False
-        if question.user_answer_index is not None:
-            is_correct = question.answers[question.user_answer_index].is_correct
-            if is_correct:
-                correct_count += 1
-        
+        qid = str(question.id)
+        correct_index = answer_key.get(qid)
+        user_ans = question.user_answer
+        is_correct = (user_ans is not None and correct_index is not None and user_ans == correct_index)
+        if is_correct:
+            correct_count += 1
+
         question_details.append({
             "question_id": question.id,
-            "question_text": question.question_text,
-            "user_answer": question.answers[question.user_answer_index].text if question.user_answer_index is not None else "No answer",
-            "correct_answer": next((ans.text for ans in question.answers if ans.is_correct), "Unknown"),
+            "user_answer": user_ans if user_ans is not None else "No answer",
+            "correct_answer_index": correct_index if correct_index is not None else "Unknown",
             "is_correct": is_correct
         })
     
@@ -54,7 +65,8 @@ def analyze_quiz(state: QuizState) -> QuizState:
         analysis += f"Q{detail['question_id']}: {status}\n"
         analysis += f"  Your answer: {detail['user_answer']}\n"
         if not detail["is_correct"]:
-            analysis += f"  Correct answer: {detail['correct_answer']}\n"
+            ca = detail.get('correct_answer_index', 'Unknown')
+            analysis += f"  Correct answer index: {ca}\n"
     
     state["analysis"] = analysis
     state["score"] = correct_count
@@ -65,13 +77,18 @@ def analyze_quiz(state: QuizState) -> QuizState:
 
 
 def apply_guardrails(state: QuizState) -> QuizState:
+    # Patterns in English kept for backward-compatibility; add Romanian equivalents too
     harmful_patterns = [
         "stupid", "dumb", "idiot", "failure", "worthless", "hopeless",
-        "give up", "terrible", "awful", "pathetic", "loser", "incompetent"
+        "give up", "terrible", "awful", "pathetic", "loser", "incompetent",
+        # Romanian
+        "prost", "idiot", "incompetent", "valorii zero", "fără valoare", "prostie"
     ]
     
     negative_patterns = [
-        "you failed", "you're bad", "you can't", "you'll never"
+        "you failed", "you're bad", "you can't", "you'll never",
+        # Romanian negative phrases
+        "ai picat", "ești prost", "nu poți", "nu vei putea niciodată"
     ]
     
     analysis_lower = state["analysis"].lower()
@@ -80,15 +97,15 @@ def apply_guardrails(state: QuizState) -> QuizState:
     violations = []
     for pattern in harmful_patterns:
         if pattern in analysis_lower or pattern in feedback_lower:
-            violations.append(f"Contains harmful language: '{pattern}'")
+            violations.append(f"Conține limbaj dăunător: '{pattern}'")
     
     for pattern in negative_patterns:
         if pattern in analysis_lower or pattern in feedback_lower:
-            violations.append(f"Contains discouraging phrase: '{pattern}'")
+            violations.append(f"Conține o expresie descurajantă: '{pattern}'")
     
     if violations:
-        state["guardrail_check"] = f"BLOCKED: {'; '.join(violations)}"
-        state["feedback"] = "Feedback generation was blocked due to safety concerns. Please contact support."
+        state["guardrail_check"] = f"BLOCAT: {'; '.join(violations)}"
+        state["feedback"] = "Generarea feedback-ului a fost blocată din motive de siguranță. Vă rugăm să contactați asistența."
     else:
         positive_indicators = ["great", "good", "excellent", "correct", "well done", "keep", "practice"]
         has_positive = any(indicator in analysis_lower or indicator in feedback_lower for indicator in positive_indicators)
@@ -96,9 +113,9 @@ def apply_guardrails(state: QuizState) -> QuizState:
         if state["total_questions"] > 0:
             constructive_check = has_positive or state["score"] == state["total_questions"]
             if constructive_check:
-                state["guardrail_check"] = "APPROVED"
+                state["guardrail_check"] = "APROBAT"
             else:
-                state["guardrail_check"] = "WARNING: Consider adding more encouraging language"
+                state["guardrail_check"] = "AVERTISMENT: Luați în considerare adăugarea unui limbaj mai încurajator"
         else:
             state["guardrail_check"] = "APPROVED"
     
@@ -113,7 +130,7 @@ def generate_feedback(state: QuizState) -> QuizState:
     api_key = os.getenv("OPENROUTER_API_KEY", "YOUR_OPENROUTER_API_KEY_HERE")
     
     if api_key == "YOUR_OPENROUTER_API_KEY_HERE" or not api_key:
-        # concise fallback behavior: short celebration if all correct, otherwise 2-3 short sentences
+    # concise fallback behavior: short celebration if all correct, otherwise 2-3 short sentences (Romanian)
         total = state['total_questions']
         score = state['score']
 
@@ -132,8 +149,8 @@ def generate_feedback(state: QuizState) -> QuizState:
         }
 
         if score == total:
-            # very short celebration
-            state["feedback"] = f"Excellent — all {total} answers are correct. Well done!"
+            # very short celebration (Romanian)
+            state["feedback"] = f"Excelent — toate cele {total} răspunsuri sunt corecte. Bravo!"
             return state
 
         # otherwise build 2-3 short sentences
@@ -147,15 +164,14 @@ def generate_feedback(state: QuizState) -> QuizState:
             if topic and topic not in suggested:
                 suggested.append(topic)
 
-        sentence1 = f"Score: {score}/{total}."
+        sentence1 = f"Scor: {score}/{total}."
         if suggested:
             # join 1-2 main topics for brevity
             top_suggestions = ", ".join(suggested[:2])
-            sentence2 = f"Review: {top_suggestions}."
+            sentence2 = f"Revizuiește: {top_suggestions}."
         else:
-            sentence2 = "Review the topics you missed."
-
-        sentence3 = "Try again after revising the concepts."
+            sentence2 = "Revizuiește subiectele la care ai greșit."
+        sentence3 = "Încearcă din nou după ce revizuiești conceptele."
 
         state["feedback"] = " ".join([sentence1, sentence2, sentence3])
         return state
@@ -168,40 +184,43 @@ def generate_feedback(state: QuizState) -> QuizState:
         temperature=0.7
     )
     
-    system_prompt = """You are a concise educational tutor. Give feedback in 2-3 short sentences only.
-If all answers are correct, respond with a single short celebratory sentence (e.g. "Excellent — all answers correct!").
-If there are incorrect answers, briefly state the score, name up to two key topics to revisit (based on the mapping provided), and finish with a short encouraging sentence.
-Always use a positive, supportive tone and keep responses very short.
+    system_prompt = """Ești un tutor educațional concis. Oferă feedback în 2-3 propoziții scurte.
+Dacă toate răspunsurile sunt corecte, răspunde cu o singură propoziție scurtă de celebrare (de ex. "Excelent — toate răspunsurile sunt corecte!").
+Dacă există răspunsuri incorecte, menționează pe scurt scorul, numește până la două subiecte cheie de revizuit (bazate pe maparea furnizată) și încheie cu o scurtă frază încurajatoare.
+Folosește întotdeauna un ton pozitiv și de susținere și păstrează răspunsurile foarte scurte.
+Răspunsurile TREBUIE să fie în LIMBA ROMÂNĂ.
 """
 
     # Provide the analysis and a mapping from question IDs to suggested review topics so the model can reference them.
     topic_map_lines = []
     topic_map = {
-        1: "conservation of momentum",
-        2: "elastic collisions and kinetic energy conservation",
-        3: "energy dissipation (heat & deformation)",
-        4: "effects of mass ratio in collisions",
-        5: "coefficient of restitution and velocity ratios",
-        6: "perfectly inelastic collisions",
-        7: "vector vs scalar quantities (momentum)",
-        8: "applying conservation on each axis for vector quantities",
-        9: "elastic collision outcomes for equal masses",
-        10: "energy loss when restitution e < 1"
+        1: "conservarea impulsului",
+        2: "coliziuni elastice și conservarea energiei cinetice",
+        3: "diziparea energiei (căldură și deformații)",
+        4: "efectele raportului de mase în coliziuni",
+        5: "coeficientul de restituție și rapoartele de viteze",
+        6: "coliziuni perfect inelastice",
+        7: "mărimi vectoriale vs scalare (impuls)",
+        8: "aplicarea conservării pe fiecare axă pentru mărimi vectoriale",
+        9: "rezultatele coliziunilor elastice pentru mase egale",
+        10: "pierdere de energie când coeficientul e < 1"
     }
     for k, v in topic_map.items():
         topic_map_lines.append(f"Q{k}: {v}")
 
-    user_prompt = f"""Please provide concise feedback for this quiz submission (2-3 short sentences).
+    user_prompt = f"""Vă rog oferiți un feedback concis pentru această trimitere de test (2-3 propoziții scurte).
 
-Quiz analysis:
+Analiză test:
 {state['analysis']}
 
-If there are incorrect answers, use the mapping below to suggest topics to review (pick up to two):
+Dacă există răspunsuri incorecte, folosiți maparea de mai jos pentru a sugera subiecte de revizuit (alegeți până la două):
 {chr(10).join(topic_map_lines)}
 
-Rules:
-- If all answers are correct: return a single short celebratory sentence.
-- If some answers are incorrect: state the score in one short sentence, suggest up to two topics to review in one short sentence, and finish with a brief encouraging sentence.
+Reguli:
+- Dacă toate răspunsurile sunt corecte: returnați o singură propoziție scurtă de celebrare.
+- Dacă unele răspunsuri sunt incorecte: menționați scorul într-o propoziție scurtă, sugerați până la două subiecte într-o propoziție scurtă și încheiați cu o scurtă frază încurajatoare.
+
+RĂSPUNSURILE TREBUIE SĂ FIE ÎN LIMBA ROMÂNĂ.
 """
     
     try:
