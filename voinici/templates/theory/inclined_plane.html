@@ -1,6 +1,7 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <title>VirtuLab — Inclined Plane Theory</title>
@@ -17,9 +18,15 @@
 
   <!-- Safety: remove list bullets if any custom CSS interferes -->
   <style>
-    .navbar-nav, .navbar-nav li { list-style: none; padding-left: 0; margin: 0; }
+    .navbar-nav,
+    .navbar-nav li {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
   </style>
 </head>
+
 <body class="bg-black text-light">
 
   <!-- Starfield background -->
@@ -33,7 +40,7 @@
       <a class="navbar-brand fw-bold brand" href="/">VirtuLab</a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-              aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -96,7 +103,8 @@
       </p>
       <p>
         The forces are the weight <em>G = mg</em>, the normal reaction <em>N</em>, and the friction force <em>F</em>.
-        The weight splits into two components: perpendicular to the plane, <em>mg cos θ</em>, and parallel to the plane, <em>mg sin θ</em>.
+        The weight splits into two components: perpendicular to the plane, <em>mg cos θ</em>, and parallel to the plane,
+        <em>mg sin θ</em>.
         The normal reaction is <em>N = mg cos θ</em>.
       </p>
     </section>
@@ -104,7 +112,8 @@
     <section class="section">
       <h2>Equilibrium vs. onset of sliding</h2>
       <p>
-        The body remains at rest as long as the parallel component of the weight is balanced by the maximum static friction:
+        The body remains at rest as long as the parallel component of the weight is balanced by the maximum static
+        friction:
       </p>
       <div class="formula">mg sin θ ≤ μs mg cos θ → tan θ ≤ μs</div>
       <p>
@@ -136,7 +145,8 @@
       </p>
       <div class="formula">v = √(2 a d), t = √(2 d / a)</div>
       <p>
-        Substituting <em>a = g (sin θ − μk cos θ)</em> lets you predict the time and final speed observed in the simulation.
+        Substituting <em>a = g (sin θ − μk cos θ)</em> lets you predict the time and final speed observed in the
+        simulation.
       </p>
     </section>
 
@@ -162,8 +172,8 @@
     <section class="section">
       <h2>Limiting cases</h2>
       <p>
-        Horizontal plane (<em>θ = 0</em>): <em>sin θ = 0</em>, the body stays at rest.  
-        Near-vertical plane (<em>θ → 90°</em>): <em>sin θ → 1</em>, <em>cos θ → 0</em>, so <em>a ≈ g</em>.  
+        Horizontal plane (<em>θ = 0</em>): <em>sin θ = 0</em>, the body stays at rest.
+        Near-vertical plane (<em>θ → 90°</em>): <em>sin θ → 1</em>, <em>cos θ → 0</em>, so <em>a ≈ g</em>.
         If <em>μs</em> is very large, the body can remain stuck up to very steep angles.
       </p>
     </section>
@@ -182,11 +192,24 @@
     </section>
   </main>
 
+  <!-- ANIMATION -->
+  <section class="theory-footer-anim">
+    <div class="anim-card ip-wrap">
+      <div class="ip-plane">
+        <div class="ip-block"></div>
+      </div>
+      <p class="anim-caption">Along the slope — a = g(sinθ − μ<sub>k</sub>cosθ)</p>
+    </div>
+  </section>
+
+
   <!-- FOOTER minimalist -->
   <footer class="py-4"></footer>
 
   <!-- Bootstrap JS bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/home.js' %}"></script>
+
 </body>
+
 </html>
