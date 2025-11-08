@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 load_dotenv()  # reads .env into os.environ
 
 app = FastAPI(
-    title="Serviciu Feedback Teste",
-    description="Sistem de feedback pentru teste bazat pe LangGraph cu integrare LLM",
+    title="Test Feedback Service",
+    description="A test feedback system based on LangGraph with LLM integration",
     version="1.0.0"
 )
 
@@ -27,13 +27,13 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {
-        "message": "API Serviciu Feedback Teste",
+    "message": "API Test Feedback Service",
         "version": "1.0.0",
         "endpoints": {
-            "POST /feedback": "Trimite un test pentru feedback",
-            "GET /mock-quiz": "Obține date de test (mock)",
-            "GET /mock-quiz-2": "Obține al doilea test (mock)",
-            "GET /health": "Verificare stare"
+            "POST /feedback": "Submit a test for feedback",
+            "GET /mock-quiz": "Get mock quiz data",
+            "GET /mock-quiz-2": "Get second mock quiz",
+            "GET /health": "Health check"
         },
         "openrouter_configured": os.getenv("OPENROUTER_API_KEY") is not None
     }
@@ -114,7 +114,7 @@ def get_quiz_feedback(payload: dict = Body(...)):
             question_feedback=result["question_details"]
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Eroare la procesarea testului: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing quiz: {str(e)}")
 
 
 @app.post("/feedback/analyze-only")
@@ -139,7 +139,7 @@ def analyze_quiz_only(submission: QuizSubmission):
             "question_details": result["question_details"]
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Eroare la analizarea testului: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error analyzing quiz: {str(e)}")
 
 
 # /feedback/simple removed — compact requests are accepted by POST /feedback

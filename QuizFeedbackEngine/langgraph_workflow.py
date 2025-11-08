@@ -22,7 +22,7 @@ def analyze_quiz(state: QuizState) -> QuizState:
     quiz = state["quiz"]
     
     if not quiz.questions or len(quiz.questions) == 0:
-        state["analysis"] = "Eroare: testul nu conține întrebări"
+        state["analysis"] = "Error: the quiz contains no questions"
         state["score"] = 0
         state["total_questions"] = 0
         state["question_details"] = []
@@ -97,15 +97,15 @@ def apply_guardrails(state: QuizState) -> QuizState:
     violations = []
     for pattern in harmful_patterns:
         if pattern in analysis_lower or pattern in feedback_lower:
-            violations.append(f"Conține limbaj dăunător: '{pattern}'")
+            violations.append(f"Contains harmful language: '{pattern}'")
     
     for pattern in negative_patterns:
         if pattern in analysis_lower or pattern in feedback_lower:
-            violations.append(f"Conține o expresie descurajantă: '{pattern}'")
+            violations.append(f"Contains discouraging phrase: '{pattern}'")
     
     if violations:
-        state["guardrail_check"] = f"BLOCAT: {'; '.join(violations)}"
-        state["feedback"] = "Generarea feedback-ului a fost blocată din motive de siguranță. Vă rugăm să contactați asistența."
+        state["guardrail_check"] = f"BLOCKED: {'; '.join(violations)}"
+        state["feedback"] = "Feedback generation was blocked for safety reasons. Please contact support."
     else:
         positive_indicators = ["great", "good", "excellent", "correct", "well done", "keep", "practice"]
         has_positive = any(indicator in analysis_lower or indicator in feedback_lower for indicator in positive_indicators)
@@ -113,9 +113,9 @@ def apply_guardrails(state: QuizState) -> QuizState:
         if state["total_questions"] > 0:
             constructive_check = has_positive or state["score"] == state["total_questions"]
             if constructive_check:
-                state["guardrail_check"] = "APROBAT"
+                state["guardrail_check"] = "APPROVED"
             else:
-                state["guardrail_check"] = "AVERTISMENT: Luați în considerare adăugarea unui limbaj mai încurajator"
+                state["guardrail_check"] = "WARNING: consider using more encouraging language"
         else:
             state["guardrail_check"] = "APPROVED"
     
@@ -149,8 +149,8 @@ def generate_feedback(state: QuizState) -> QuizState:
         }
 
         if score == total:
-            # very short celebration (Romanian)
-            state["feedback"] = f"Excelent — toate cele {total} răspunsuri sunt corecte. Bravo!"
+            # very short celebration (English)
+            state["feedback"] = f"Excellent — all {total} answers are correct. Well done!"
             return state
 
         # otherwise build 2-3 short sentences
@@ -164,14 +164,14 @@ def generate_feedback(state: QuizState) -> QuizState:
             if topic and topic not in suggested:
                 suggested.append(topic)
 
-        sentence1 = f"Scor: {score}/{total}."
+        sentence1 = f"Score: {score}/{total}."
         if suggested:
             # join 1-2 main topics for brevity
             top_suggestions = ", ".join(suggested[:2])
-            sentence2 = f"Revizuiește: {top_suggestions}."
+            sentence2 = f"Review: {top_suggestions}."
         else:
-            sentence2 = "Revizuiește subiectele la care ai greșit."
-        sentence3 = "Încearcă din nou după ce revizuiești conceptele."
+            sentence2 = "Review the topics you missed."
+        sentence3 = "Try again after reviewing the concepts."
 
         state["feedback"] = " ".join([sentence1, sentence2, sentence3])
         return state
@@ -184,43 +184,43 @@ def generate_feedback(state: QuizState) -> QuizState:
         temperature=0.7
     )
     
-    system_prompt = """Ești un tutor educațional concis. Oferă feedback în 2-3 propoziții scurte.
-Dacă toate răspunsurile sunt corecte, răspunde cu o singură propoziție scurtă de celebrare (de ex. "Excelent — toate răspunsurile sunt corecte!").
-Dacă există răspunsuri incorecte, menționează pe scurt scorul, numește până la două subiecte cheie de revizuit (bazate pe maparea furnizată) și încheie cu o scurtă frază încurajatoare.
-Folosește întotdeauna un ton pozitiv și de susținere și păstrează răspunsurile foarte scurte.
-Răspunsurile TREBUIE să fie în LIMBA ROMÂNĂ.
+    system_prompt = """You are a concise educational tutor. Provide feedback in 2-3 short sentences.
+If all answers are correct, reply with a single short celebratory sentence (e.g. "Excellent — all answers are correct!").
+If there are incorrect answers, briefly state the score, name up to two key topics to review (based on the provided mapping), and finish with a short encouraging sentence.
+Always use a positive, supportive tone and keep replies very short.
+Responses MUST be in ENGLISH.
 """
 
     # Provide the analysis and a mapping from question IDs to suggested review topics so the model can reference them.
     topic_map_lines = []
     topic_map = {
-        1: "conservarea impulsului",
-        2: "coliziuni elastice și conservarea energiei cinetice",
-        3: "diziparea energiei (căldură și deformații)",
-        4: "efectele raportului de mase în coliziuni",
-        5: "coeficientul de restituție și rapoartele de viteze",
-        6: "coliziuni perfect inelastice",
-        7: "mărimi vectoriale vs scalare (impuls)",
-        8: "aplicarea conservării pe fiecare axă pentru mărimi vectoriale",
-        9: "rezultatele coliziunilor elastice pentru mase egale",
-        10: "pierdere de energie când coeficientul e < 1"
+        1: "conservation of momentum",
+        2: "elastic collisions and conservation of kinetic energy",
+        3: "energy dissipation (heat & deformation)",
+        4: "effects of mass ratio in collisions",
+        5: "coefficient of restitution and velocity ratios",
+        6: "perfectly inelastic collisions",
+        7: "vector vs scalar quantities (momentum)",
+        8: "applying conservation on each axis for vector quantities",
+        9: "elastic collision outcomes for equal masses",
+        10: "energy loss when restitution e < 1"
     }
     for k, v in topic_map.items():
         topic_map_lines.append(f"Q{k}: {v}")
 
-    user_prompt = f"""Vă rog oferiți un feedback concis pentru această trimitere de test (2-3 propoziții scurte).
+    user_prompt = f"""Please provide concise feedback for this quiz submission (2-3 short sentences).
 
-Analiză test:
+Quiz analysis:
 {state['analysis']}
 
-Dacă există răspunsuri incorecte, folosiți maparea de mai jos pentru a sugera subiecte de revizuit (alegeți până la două):
+If there are incorrect answers, use the mapping below to suggest topics to review (choose up to two):
 {chr(10).join(topic_map_lines)}
 
-Reguli:
-- Dacă toate răspunsurile sunt corecte: returnați o singură propoziție scurtă de celebrare.
-- Dacă unele răspunsuri sunt incorecte: menționați scorul într-o propoziție scurtă, sugerați până la două subiecte într-o propoziție scurtă și încheiați cu o scurtă frază încurajatoare.
+Rules:
+- If all answers are correct: return a single short celebratory sentence.
+- If some answers are incorrect: mention the score in one short sentence, suggest up to two topics in one short sentence, and finish with a short encouraging sentence.
 
-RĂSPUNSURILE TREBUIE SĂ FIE ÎN LIMBA ROMÂNĂ.
+RESPONSES MUST BE IN ENGLISH.
 """
     
     try:

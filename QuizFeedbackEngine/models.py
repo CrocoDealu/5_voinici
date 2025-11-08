@@ -39,11 +39,11 @@ class AnswerSubmission(BaseModel):
 
 
 class QuizAttempt(BaseModel):
-        """Trimitere simplificată: referință la întrebări prin ID și indexul răspunsului utilizatorului.
+        """Compact submission: reference questions by ID and provide the user's answer index.
 
-        Exemplu:
+        Example:
         {
-            "title": "Coliziuni și impuls",       # opțional, folosit pentru a selecta testul mock
+            "title": "Collisions and Momentum",   # optional, used to select the mock quiz
             "answers": [ {"question_id": 1, "user_answer": 2}, ... ]
         }
         """

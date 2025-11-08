@@ -4,7 +4,7 @@ from models import Quiz, Question
 # Simple mock quiz: questions contain only ids and no full text/answers.
 # The canonical correct answers are stored in `answers_key.json`.
 MOCK_QUIZ = Quiz(
-    title="Coliziuni și impuls",
+    title="Collisions and Momentum",
     questions=[
         Question(id=1, user_answer=None),
         Question(id=2, user_answer=None),
