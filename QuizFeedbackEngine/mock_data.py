@@ -11,11 +11,6 @@ MOCK_QUIZ = Quiz(
         Question(id=3, user_answer=None),
         Question(id=4, user_answer=None),
         Question(id=5, user_answer=None),
-        Question(id=6, user_answer=None),
-        Question(id=7, user_answer=None),
-        Question(id=8, user_answer=None),
-        Question(id=9, user_answer=None),
-        Question(id=10, user_answer=None),
     ]
 )
 

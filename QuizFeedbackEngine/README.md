@@ -1,6 +1,4 @@
-# Quiz Feedback Service with LangGraph
-
-A FastAPI service that uses LangGraph workflows to provide AI-powered feedback on quiz submissions using LLM integration via OpenRouter.
+# Quiz Feedback Engine – AI-Powered Quiz Feedback Service
 
 ## Features
 

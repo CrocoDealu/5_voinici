@@ -11,5 +11,7 @@ urlpatterns = [
     path('theory/inclined_plane/', views.inclined_plane_view, name='inclined_plane'),
     path('theory/collision/', views.collision_view, name='collision'),
     path('theory/pendulum/', views.pendulum_view, name='pendulum'),
+    path('quiz/collision/', views.collision_quiz_view, name='collision_quiz'),
+    path('quiz/pendulum/', views.pendulum_quiz_view, name='pendulum_quiz'),
 
 ]
