@@ -1,0 +1,60 @@
+{
+  "title": "Inclined Plane Basics (5 questions)",
+  "questions": [
+    {
+      "id": 1,
+      "text": "What forces act on an object on an inclined plane?",
+      "answers": [
+        {"text": "Gravity and normal force"},
+        {"text": "Friction and tension"},
+        {"text": "Only friction"},
+        {"text": "Only gravity"}
+      ],
+      "correct_answer": 0
+    },
+    {
+      "id": 2,
+      "text": "How is the component of gravitational force along the incline calculated?",
+      "answers": [
+        {"text": "m g sin(theta)"},
+        {"text": "m g cos(theta)"},
+        {"text": "m g"},
+        {"text": "m g tan(theta)"}
+      ],
+      "correct_answer": 0
+    },
+    {
+      "id": 3,
+      "text": "What effect does increasing the angle of inclination have on the acceleration of an object down the incline?",
+      "answers": [
+        {"text": "Acceleration increases"},
+        {"text": "Acceleration decreases"},
+        {"text": "Acceleration stays the same"},
+        {"text": "Acceleration becomes zero"}
+      ],
+      "correct_answer": 0
+    },
+    {
+      "id": 4,
+      "text": "How do you calculate the frictional force on an inclined plane?",
+      "answers": [
+        {"text": "Coefficient of friction multiplied by normal force"},
+        {"text": "Coefficient of friction multiplied by gravitational force"},
+        {"text": "Normal force minus gravitational force"},
+        {"text": "Mass multiplied by acceleration"}
+      ],
+      "correct_answer": 0
+    },
+    {
+      "id": 5,
+      "text": "What is the correct formula for the normal force on an inclined plane without friction?",
+      "answers": [
+        {"text": "m g cos(theta)"},
+        {"text": "m g sin(theta)"},
+        {"text": "m g"},
+        {"text": "Zero"}
+      ],
+      "correct_answer": 0
+    }
+  ]
+}

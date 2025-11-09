@@ -8,6 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+
+  {% block extra_css %}{% endblock %}
 </head>
 
 <body class="bg-black text-light">
@@ -37,7 +39,7 @@
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Experiments</a>
             <ul class="dropdown-menu dropdown-dark">
               <li><a class="dropdown-item" href="{% url 'pendulum' %}">Pendulum</a></li>
-              <li><a class="dropdown-item" href="{% url 'collision_quiz' %}">Collision</a></li>
+              <li><a class="dropdown-item" href="{% url 'quiz' %}?quiz=collision_quiz.json">Collision Quiz</a></li>
               <li><a class="dropdown-item" href="{% url 'inclined_plane' %}">Inclined Plane</a></li>
             </ul>
           </li>
@@ -45,9 +47,9 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tests</a>
             <ul class="dropdown-menu dropdown-dark">
-              <li><a class="dropdown-item" href="{% url 'pendulum_quiz' %}">Pendulum Quiz</a></li>
-              <li><a class="dropdown-item" href="{% url 'collision_quiz' %}">Collision Quiz</a></li>
-              <li><a class="dropdown-item" href="#">Inclined Plane Quiz</a></li>
+              <li><a class="dropdown-item" href="{% url 'quiz' %}?quiz=pendulum_quiz.json">Pendulum Quiz</a></li>
+              <li><a class="dropdown-item" href="{% url 'quiz' %}?quiz=collision_quiz.json">Collision Quiz</a></li>
+              <li><a class="dropdown-item" href="{% url 'quiz' %}?quiz=inclined_plane_quiz.json">Collision Quiz</a></li>
             </ul>
           </li>
 
@@ -76,4 +78,5 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/home.js' %}"></script>
 </body>
+
 </html>

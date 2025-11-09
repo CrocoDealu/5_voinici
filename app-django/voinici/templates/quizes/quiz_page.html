@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/quiz.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div id="quiz-container">Loading quiz…</div>
+  <div class="d-flex gap-2 mt-3">
+    <button id="submit-btn" class="btn btn-brand" disabled>Send answers</button>
+    <button id="clear-btn" class="btn btn-outline-brand">Clear</button>
+  </div>
+  <h3 class="mt-4 text-muted-2">Feedback</h3>
+  <pre id="feedback">(no feedback yet)</pre>
+</div>
+
+<script src="{% static 'js/quiz.js' %}"></script>
+{% endblock %}

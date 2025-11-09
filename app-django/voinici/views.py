@@ -10,14 +10,12 @@ def inclined_plane_view(request):
 def collision_view(request):
     return render(request, 'theory/collision.html')
 
-
-def collision_quiz_view(request):
-    # Render the collision quiz page (static/JS-driven quiz)
-    return render(request, 'quizes/collision_quiz.html')
-
-def pendulum_quiz_view(request):
-    # Render the pendulum quiz page (static/JS-driven quiz)
-    return render(request, 'quizes/pendulum_quiz.html')
+def quiz_view(request):
+    quiz_file = request.GET.get('quiz', 'collision_quiz.json')  # default quiz file
+    context = {
+        "quiz_file": quiz_file
+    }
+    return render(request, 'quizes/quiz_page.html', context)
 
 def pendulum_view(request):
     return render(request, 'theory/pendulum.html')

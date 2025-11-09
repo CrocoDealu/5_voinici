@@ -8,12 +8,11 @@
 const API_BASE = window.QFE_API_BASE || 'http://127.0.0.1:5000'; // change if your service runs elsewhere
 
 async function fetchQuiz() {
-  // If a page embeds a quiz (window.__embeddedQuiz), prefer that for offline/standalone use.
-  if (window.__embeddedQuiz) return window.__embeddedQuiz;
-
-  const res = await fetch(`${API_BASE}/feedback`);
+  const res = await fetch(`/static/quiz-data/${quizFile}`);
   if (!res.ok) throw new Error('Failed to load quiz');
-  return res.json();
+  const quiz = await res.json();
+  window.__embeddedQuiz = quiz;
+  return quiz;
 }
 
 function renderQuiz(quiz) {
@@ -88,6 +87,7 @@ function renderQuiz(quiz) {
 function collectAttempt(quiz) {
   const form = document.getElementById('quiz-form');
   const answers = [];
+
   quiz.questions.forEach((q, idx) => {
     const qid = q.id || null;
     const name = `q_${idx}`;
@@ -100,14 +100,18 @@ function collectAttempt(quiz) {
       if (input) user_index = input.value || '';
     }
 
-  // For the compact /feedback/simple endpoint we send question_id + user_answer
-  answers.push({ question_id: qid, user_answer: user_index });
+    answers.push({
+      id: qid,
+      text: q.text,
+      options: q.answers.map(a => a.text),
+      correct_answer: q.correct_answer,  // include correct answer index from JSON
+      user_answer: user_index
+    });
   });
 
   return {
-    // Normalize title (remove parenthetical suffix like "(10 questions)")
-    title: (quiz.title || '').split(' (')[0],
-    answers
+    title: quiz.title,
+    questions: answers
   };
 }
 
@@ -145,6 +149,9 @@ async function submitAttempt(attempt) {
     return res.json();
 }
 
+const urlParams = new URLSearchParams(window.location.search);
+const quizFile = urlParams.get('quiz') || 'collision_quiz.json';
+
 async function init() {
   try {
     const quiz = await fetchQuiz();
@@ -173,10 +180,10 @@ async function init() {
         document.getElementById('submit-btn').disabled = true;
         document.getElementById('feedback').textContent = 'Submitting…';
         const attempt = collectAttempt(quiz);
-  const resp = await submitAttempt(attempt);
-  // If backend returns an object with a 'feedback' field, show that; otherwise show the full response.
-  const feedbackText = (resp && resp.feedback) ? resp.feedback : JSON.stringify(resp, null, 2);
-  document.getElementById('feedback').textContent = feedbackText;
+        const resp = await submitAttempt(attempt);
+        // If backend returns an object with a 'feedback' field, show that; otherwise show the full response.
+        const feedbackText = (resp && resp.feedback) ? resp.feedback : JSON.stringify(resp, null, 2);
+        document.getElementById('feedback').textContent = feedbackText;
       } catch (err) {
         // Don't show internal error or raw response to the user. Show a friendly message instead.
         document.getElementById('feedback').textContent = "Our AI isn't available at the moment";
