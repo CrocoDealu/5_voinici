@@ -41,9 +41,9 @@
       Along the tangential direction, the component of the weight is <em>−m g sin(theta)</em>.
       Using Newton’s second law on a circular arc (tangential acceleration <em>L * theta''</em>):
     </p>
-    <div class="formula">m L * theta'' + m g sin(theta) = 0</div>
+  <div class="formula">$$m L\, \theta'' + m g \sin\theta = 0$$</div>
     <p>Dividing by <em>mL</em> gives the nonlinear equation:</p>
-    <div class="formula">theta'' + (g / L) sin(theta) = 0</div>
+  <div class="formula">$$\theta'' + \dfrac{g}{L} \sin\theta = 0$$</div>
   </section>
 
   <section class="section">
@@ -52,11 +52,11 @@
       For small angles (in radians), <em>sin(theta) ≈ theta</em>.
       The equation becomes linear:
     </p>
-    <div class="formula">theta'' + (g / L) theta = 0</div>
+  <div class="formula">$$\theta'' + \dfrac{g}{L} \theta = 0$$</div>
     <p>The solution is a simple harmonic oscillation:</p>
-    <div class="formula">theta(t) = A cos( sqrt(g/L) * t + phi )</div>
+  <div class="formula">$$\theta(t) = A \cos\!\left(\sqrt{\dfrac{g}{L}}\, t + \phi\right)$$</div>
     <p>The oscillation period is (approximately) independent of amplitude:</p>
-    <div class="formula">T = 2 pi sqrt( L / g )</div>
+  <div class="formula">$$T = 2\pi \sqrt{\dfrac{L}{g}}$$</div>
     <p>Consequences: mass does not appear in the period; doubling <em>L</em> scales <em>T</em> by <em>sqrt(2)</em>.</p>
   </section>
 
@@ -66,20 +66,20 @@
       At large angles the approximation <em>sin(theta) ≈ theta</em> breaks down.
       The period increases slightly with amplitude; a useful series (with <em>theta0</em> in radians) is:
     </p>
-    <div class="formula">T ≈ 2 pi sqrt(L/g) * [ 1 + (1/16) theta0^2 + (11/3072) theta0^4 + ... ]</div>
+  <div class="formula">$$T \approx 2\pi\sqrt{\dfrac{L}{g}}\left[1 + \dfrac{1}{16}\theta_0^{2} + \dfrac{11}{3072}\theta_0^{4} + \cdots\right]$$</div>
   </section>
 
   <section class="section">
     <h2>Energy</h2>
     <p>With no losses, mechanical energy is conserved; taking zero potential energy at the lowest point:</p>
-    <div class="formula">E = K + U = 1/2 m (L * theta')^2 + m g L (1 − cos theta) = const.</div>
+  <div class="formula">$$E = K + U = \tfrac{1}{2} m (L\,\theta')^{2} + m g L (1 - \cos\theta) = \text{const.}$$</div>
     <p>At the bottom (<em>theta = 0</em>) energy is purely kinetic; at the turning point (<em>theta = theta0</em>) it is purely potential.</p>
   </section>
 
   <section class="section">
     <h2>Damping (optional)</h2>
     <p>With weak drag (proportional to angular velocity), the equation becomes:</p>
-    <div class="formula">theta'' + 2 beta theta' + (g/L) sin(theta) = 0</div>
+  <div class="formula">$$\theta'' + 2\beta\theta' + \dfrac{g}{L}\sin\theta = 0$$</div>
     <p>For small angles and small <em>beta</em>, the amplitude decays exponentially while the period changes only slightly.</p>
   </section>
 
