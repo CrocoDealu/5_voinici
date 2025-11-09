@@ -9,13 +9,11 @@
     visualize results in real time, and learn by experimenting — all in your browser.
   </p>
   <div class="d-flex justify-content-center gap-3">
-    <a href="#" class="btn btn-brand btn-lg">Start a Simulation</a>
-    <a href="/theory/inclined_plane/" class="btn btn-outline-brand btn-lg">Browse Theory</a>
+    <a href="{% url 'exp_pendulum' %}" class="btn btn-brand btn-lg">Start a Simulation</a>
+    <a href="{% url 'pendulum' %}" class="btn btn-outline-brand btn-lg">Browse Theory</a>
   </div>
 </header>
 
-<!-- WIREFRAME SHOWCASE -->
-<!-- 3D WIRE CUBE (levitating) -->
 <section class="wire-cube">
   <div class="cube-scene">
     <div class="cube">
@@ -28,6 +26,4 @@
     </div>
   </div>
 </section>
-
-
 {% endblock %}
