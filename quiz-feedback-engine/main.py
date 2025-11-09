@@ -12,12 +12,16 @@ app = FastAPI(title="Quiz Feedback API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        # Allow local dev origins (add or remove as needed)
+        "http://127.0.0.1:8000",
+        "http://localhost:8000",
         "http://127.0.0.1:8001",
         "http://localhost:8001",
     ],
-    allow_credentials=False,
-    allow_methods=["POST"],
-    allow_headers=["content-type"],
+    # Relax CORS for local development. For production, lock this down.
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
     max_age=86400,
 )
 

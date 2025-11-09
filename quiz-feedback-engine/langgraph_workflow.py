@@ -85,6 +85,7 @@ def generate_feedback(state: QuizState) -> QuizState:
             if score == total else f"Score: {score}/{total}. Keep practicing to improve!"
         )
         return state
+    print(api_key)
 
     llm = ChatOpenAI(
         api_key=api_key,
@@ -117,8 +118,19 @@ def generate_feedback(state: QuizState) -> QuizState:
         messages = [SystemMessage(content=system_prompt), HumanMessage(content=user_prompt)]
         response = llm.invoke(messages)
         state["feedback"] = str(response.content)
-    except Exception:
-        state["feedback"] = "AI feedback unavailable; see your quiz results above."
+        print("response:", response.content)
+    except Exception as exc:
+        # Print available results (analysis & per-question details) for debugging
+        # without exposing secrets. Provide a short, friendly generic message to the user
+        # that also includes the number of correct answers.
+        print("LLM invocation failed:", exc)
+        print("Analysis:\n", state.get("analysis", "<no analysis>"))
+        print("Question details:\n", state.get("question_details", []))
+        # Include score/total in the friendly message for the user
+        total = state.get("total_questions", 0)
+        score = state.get("score", 0)
+        # Friendly user-facing message (non-judgmental) and include results
+        state["feedback"] = f"We received your results but our AI is shy at the moment — here are your results: {score}/{total} correct."
     return state
 
 def apply_guardrails(state: QuizState) -> QuizState:

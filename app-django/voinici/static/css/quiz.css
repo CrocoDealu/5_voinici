@@ -40,3 +40,16 @@
               0 0 0 1px rgba(255,80,80,.12);
   border-left: 3px solid rgba(255,100,100,.9);
 }
+
+/* Feedback box styling: allow wrapping instead of horizontal scrolling */
+#feedback {
+  display: block;
+  white-space: pre-wrap; /* Respect newlines, allow wrapping */
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  overflow-wrap: anywhere; /* break long words/URLs if needed */
+  word-wrap: break-word;
+  overflow-x: hidden; /* prevent horizontal scrollbar */
+  max-width: 100%;
+}
