@@ -23,12 +23,10 @@
   <nav class="navbar navbar-expand-lg navbar-dark border-bottom nav-glow">
     <div class="container ">
       <a class="navbar-brand fw-bold brand" href="/">VirtuLab</a>
-
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
         aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-
       <div id="mainNav" class="collapse navbar-collapse">
         <ul class="navbar-nav ms-auto align-items-lg-center">
           <li class="nav-item">
@@ -37,26 +35,25 @@
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Experiments</a>
-            <ul class="dropdown-menu dropdown-dark">
-              <li><a class="dropdown-item" href="{% url 'pendulum' %}">Pendulum</a></li>
-              <li><a class="dropdown-item" href="{% url 'quiz' %}?quiz=collision_quiz.json">Collision Quiz</a></li>
-              <li><a class="dropdown-item" href="{% url 'inclined_plane' %}">Inclined Plane</a></li>
+            <ul class="dropdown-menu dropdown-dark" data-bs-auto-close="true">
+              <li><a class="dropdown-item" href="{% url 'exp_pendulum' %}">Pendulum</a></li>
+              <li><a class="dropdown-item" href="{% url 'exp_collision' %}">Collision</a></li>
+              <li><a class="dropdown-item" href="{% url 'exp_inclined_plane' %}">Inclined Plane</a></li>
             </ul>
           </li>
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tests</a>
-            <ul class="dropdown-menu dropdown-dark">
+            <ul class="dropdown-menu dropdown-dark" data-bs-auto-close="true">
               <li><a class="dropdown-item" href="{% url 'quiz' %}?quiz=pendulum_quiz.json">Pendulum Quiz</a></li>
               <li><a class="dropdown-item" href="{% url 'quiz' %}?quiz=collision_quiz.json">Collision Quiz</a></li>
-              <li><a class="dropdown-item" href="{% url 'quiz' %}?quiz=inclined_plane_quiz.json">Collision Quiz</a></li>
+              <li><a class="dropdown-item" href="{% url 'quiz' %}?quiz=inclined_plane_quiz.json">Inclined Plane Quiz</a></li>
             </ul>
           </li>
 
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle {% if '/theory/' in request.path %}active{% endif %}" href="#"
-              data-bs-toggle="dropdown">Theory</a>
-            <ul class="dropdown-menu dropdown-dark">
+            <a class="nav-link dropdown-toggle {% if '/theory/' in request.path %}active{% endif %}" href="#" data-bs-toggle="dropdown">Theory</a>
+            <ul class="dropdown-menu dropdown-dark" data-bs-auto-close="true">
               <li><a class="dropdown-item" href="/theory/inclined_plane/">Inclined Plane</a></li>
               <li><a class="dropdown-item" href="/theory/pendulum/">Pendulum</a></li>
               <li><a class="dropdown-item" href="/theory/collision/">Collisions</a></li>

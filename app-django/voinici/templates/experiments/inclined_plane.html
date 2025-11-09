@@ -1,0 +1,14 @@
+{# templates/experiments/inclined_plane.html #}
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Inclined Plane{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4 text-center">Inclined Plane</h1>
+<iframe
+  src="{% static 'interactives/inclined_plane/incline_scene.html' %}"
+  width="1152" height="648"
+  class="d-block mx-auto mb-5"
+  style="border:0"
+  allowfullscreen>
+</iframe>
+{% endblock %}

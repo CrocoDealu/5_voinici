@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Pendulum{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4 text-center">Pendulum</h1>
+<iframe
+  src="{% static 'interactives/pendulum/pendulum.html' %}"
+  width="1152" height="648"
+  class="d-block mx-auto mb-5"
+  style="border:0"
+  allowfullscreen>
+</iframe>
+{% endblock %}

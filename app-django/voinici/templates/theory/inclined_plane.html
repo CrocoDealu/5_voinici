@@ -1,215 +1,111 @@
+{% extends 'base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="en">
 
-<head>
-  <meta charset="utf-8" />
-  <title>VirtuLab — Inclined Plane Theory</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <!-- Global styles (navbar, starfield, buttons) -->
-  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
-
-  <!-- Page-specific theory styling -->
+{% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/theory.css' %}" />
-
-  <!-- Safety: remove list bullets if any custom CSS interferes -->
   <style>
+    /* Safety: keep navbar bullets off if any custom CSS interferes */
     .navbar-nav,
     .navbar-nav li {
       list-style: none;
       padding-left: 0;
       margin: 0;
     }
+
+    /* Fix animation direction: start by sliding DOWN the plane */
+    .theory-footer-anim .ip-block {
+      animation-direction: reverse !important;   /* play keyframes 100% -> 0% */
+      animation-fill-mode: both;                 /* keep endpoints stable if needed */
+    }
+    /* If your authored animation bounces with 'alternate', use this instead: */
+    /* .theory-footer-anim .ip-block { animation-direction: alternate-reverse !important; } */
   </style>
-</head>
+{% endblock %}
 
-<body class="bg-black text-light">
+{% block content %}
+<main class="page">
+  <h1 class="title">Inclined plane — forces, equilibrium, and motion</h1>
+  <p class="subtitle">Theory material for the experiment with a cube resting on an inclined plane</p>
 
-  <!-- Starfield background -->
-  <div class="starfield">
-    <canvas id="stars"></canvas>
+  <div class="lead">
+    The goal is to understand how a simple rigid body moves on an inclined plane.
+    You will see the role of the plane angle, how the weight splits into useful components,
+    what friction does, and under which conditions the body stays at rest or starts sliding.
   </div>
 
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg navbar-dark border-bottom nav-glow">
-    <div class="container">
-      <a class="navbar-brand fw-bold brand" href="/">VirtuLab</a>
-
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div id="mainNav" class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto align-items-lg-center">
-
-          <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-          </li>
-
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Experiments</a>
-            <ul class="dropdown-menu dropdown-dark">
-              <li><a class="dropdown-item" href="#">Pendulum</a></li>
-              <li><a class="dropdown-item" href="#">Collision</a></li>
-              <li><a class="dropdown-item" href="#">Inclined Plane</a></li>
-            </ul>
-          </li>
-
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tests</a>
-            <ul class="dropdown-menu dropdown-dark">
-              <li><a class="dropdown-item" href="#">Pendulum Quiz</a></li>
-              <li><a class="dropdown-item" href="#">Collision Quiz</a></li>
-              <li><a class="dropdown-item" href="#">Inclined Plane Quiz</a></li>
-            </ul>
-          </li>
-
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Theory</a>
-            <ul class="dropdown-menu dropdown-dark">
-              <li><a class="dropdown-item" href="/theory/inclined_plane/">Inclined Plane Theory</a></li>
-              <li><a class="dropdown-item" href="/theory/collision/">Collisions Theory</a></li>
-              <li><a class="dropdown-item active" href="/theory/pendulum/">Pendulum Theory</a></li>>
-            </ul>
-          </li>
-
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- MAIN CONTENT -->
-  <main class="page">
-    <h1 class="title">Inclined plane — forces, equilibrium, and motion</h1>
-    <p class="subtitle">Theory material for the experiment with a cube resting on an inclined plane</p>
-
-    <div class="lead">
-      The goal is to understand how a simple rigid body moves on an inclined plane.
-      You will see the role of the plane angle, how the weight splits into useful components,
-      what friction does, and under which conditions the body stays at rest or starts sliding.
-    </div>
-
-    <section class="section">
-      <h2>Physical model</h2>
-      <p>
-        Consider a homogeneous cube on a rigid plane inclined at an angle <em>θ</em> to the horizontal.
-        We neglect air resistance; contact is dry, characterized by a static friction coefficient <em>μs</em> and,
-        once motion starts, a kinetic friction coefficient <em>μk</em>.
-      </p>
-      <p>
-        The forces are the weight <em>G = mg</em>, the normal reaction <em>N</em>, and the friction force <em>F</em>.
-        The weight splits into two components: perpendicular to the plane, <em>mg cos θ</em>, and parallel to the plane,
-        <em>mg sin θ</em>.
-        The normal reaction is <em>N = mg cos θ</em>.
-      </p>
-    </section>
-
-    <section class="section">
-      <h2>Equilibrium vs. onset of sliding</h2>
-      <p>
-        The body remains at rest as long as the parallel component of the weight is balanced by the maximum static
-        friction:
-      </p>
-      <div class="formula">mg sin θ ≤ μs mg cos θ → tan θ ≤ μs</div>
-      <p>
-        When the angle increases so that <em>tan θ &gt; μs</em>, static friction cannot balance the downslope component,
-        and the body begins to slide. The critical angle is <em>θ<sub>crit</sub> = arctan(μs)</em>.
-      </p>
-    </section>
-
-    <section class="section">
-      <h2>Motion on the plane</h2>
-      <p>
-        After the body starts sliding, the net force along the plane is:
-      </p>
-      <div class="formula">F<sub>net</sub> = mg sin θ − μk mg cos θ</div>
-      <p>
-        Dividing by the mass gives the acceleration:
-      </p>
-      <div class="formula">a = g (sin θ − μk cos θ)</div>
-      <p>
-        Note the mass cancels — all bodies accelerate the same for the same angle and friction.
-        With no friction, <em>a = g sin θ</em>.
-      </p>
-    </section>
-
-    <section class="section">
-      <h2>Equations of motion</h2>
-      <p>
-        For a slide over distance <em>d</em> starting from rest:
-      </p>
-      <div class="formula">v = √(2 a d), t = √(2 d / a)</div>
-      <p>
-        Substituting <em>a = g (sin θ − μk cos θ)</em> lets you predict the time and final speed observed in the
-        simulation.
-      </p>
-    </section>
-
-    <section class="section">
-      <h2>Experimental determination of the coefficients</h2>
-      <p>
-        For <em>μs</em>, increase the angle slowly until the body just starts to slide;
-        the measured critical angle gives <em>μs = tan θ<sub>crit</sub></em>.
-        For <em>μk</em>, pick an angle above the threshold, measure the time over a distance <em>d</em>,
-        then compute the acceleration and back out <em>μk</em> via the formula above.
-      </p>
-    </section>
-
-    <section class="section">
-      <h2>Energy viewpoint</h2>
-      <p>
-        Gravitational potential energy <em>mgh</em> is converted into work against friction and kinetic energy.
-        With no friction:
-      </p>
-      <div class="formula">½ m v² = m g d sin θ → v = √(2 g d sin θ)</div>
-    </section>
-
-    <section class="section">
-      <h2>Limiting cases</h2>
-      <p>
-        Horizontal plane (<em>θ = 0</em>): <em>sin θ = 0</em>, the body stays at rest.
-        Near-vertical plane (<em>θ → 90°</em>): <em>sin θ → 1</em>, <em>cos θ → 0</em>, so <em>a ≈ g</em>.
-        If <em>μs</em> is very large, the body can remain stuck up to very steep angles.
-      </p>
-    </section>
-
-    <section class="section">
-      <h2>Conclusion</h2>
-      <p>
-        Motion on an inclined plane boils down to two key relations:
-      </p>
-      <div class="formula">a = g (sin θ − μk cos θ)</div>
-      <div class="formula">tan θ &gt; μs → sliding begins</div>
-      <p>
-        These formulas enable a complete analysis and link angle, friction, speed, and time.
-        In the simulator you can tune parameters and observe their direct effects.
-      </p>
-    </section>
-  </main>
-
-  <!-- ANIMATION -->
-  <section class="theory-footer-anim">
-    <div class="anim-card ip-wrap">
-      <div class="ip-plane">
-        <div class="ip-block"></div>
-      </div>
-      <p class="anim-caption">Along the slope — a = g(sinθ − μ<sub>k</sub>cosθ)</p>
-    </div>
+  <section class="section">
+    <h2>Physical model</h2>
+    <p>
+      Consider a homogeneous cube on a rigid plane inclined at an angle <em>θ</em> to the horizontal.
+      We neglect air resistance; contact is dry, characterized by a static friction coefficient <em>μs</em> and,
+      once motion starts, a kinetic friction coefficient <em>μk</em>.
+    </p>
+    <p>
+      The forces are the weight <em>G = mg</em>, the normal reaction <em>N</em>, and the friction force <em>F</em>.
+      The weight splits into two components: perpendicular to the plane, <em>mg cos θ</em>, and parallel to the plane,
+      <em>mg sin θ</em>. The normal reaction is <em>N = mg cos θ</em>.
+    </p>
   </section>
 
+  <section class="section">
+    <h2>Equilibrium vs. onset of sliding</h2>
+    <p>The body remains at rest as long as the parallel component of the weight is balanced by the maximum static friction:</p>
+    <div class="formula">mg sin θ ≤ μs mg cos θ → tan θ ≤ μs</div>
+    <p>
+      When the angle increases so that <em>tan θ &gt; μs</em>, static friction cannot balance the downslope component,
+      and the body begins to slide. The critical angle is <em>θ<sub>crit</sub> = arctan(μs)</em>.
+    </p>
+  </section>
 
-  <!-- FOOTER minimalist -->
-  <footer class="py-4"></footer>
+  <section class="section">
+    <h2>Motion on the plane</h2>
+    <p>After the body starts sliding, the net force along the plane is:</p>
+    <div class="formula">F<sub>net</sub> = mg sin θ − μk mg cos θ</div>
+    <p>Dividing by the mass gives the acceleration:</p>
+    <div class="formula">a = g (sin θ − μk cos θ)</div>
+    <p>Note the mass cancels — all bodies accelerate the same for the same angle and friction; with no friction, <em>a = g sin θ</em>.</p>
+  </section>
 
-  <!-- Bootstrap JS bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="{% static 'js/home.js' %}"></script>
+  <section class="section">
+    <h2>Equations of motion</h2>
+    <p>For a slide over distance <em>d</em> starting from rest:</p>
+    <div class="formula">v = √(2 a d), t = √(2 d / a)</div>
+    <p>Substituting <em>a = g (sin θ − μk cos θ)</em> lets you predict the time and final speed observed in the simulation.</p>
+  </section>
 
-</body>
+  <section class="section">
+    <h2>Experimental determination of the coefficients</h2>
+    <p>For <em>μs</em>, increase the angle slowly until the body just starts to slide; the measured critical angle gives <em>μs = tan θ<sub>crit</sub></em>.</p>
+    <p>For <em>μk</em>, pick an angle above the threshold, measure the time over a distance <em>d</em>, then compute the acceleration and back out <em>μk</em> via the formula above.</p>
+  </section>
 
-</html>
+  <section class="section">
+    <h2>Energy viewpoint</h2>
+    <p>Gravitational potential energy <em>mgh</em> is converted into work against friction and kinetic energy; with no friction:</p>
+    <div class="formula">½ m v² = m g d sin θ → v = √(2 g d sin θ)</div>
+  </section>
+
+  <section class="section">
+    <h2>Limiting cases</h2>
+    <p>Horizontal plane (<em>θ = 0</em>): <em>sin θ = 0</em>, the body stays at rest.</p>
+    <p>Near‑vertical plane (<em>θ → 90°</em>): <em>sin θ → 1</em>, <em>cos θ → 0</em>, so <em>a ≈ g</em>; very large <em>μs</em> can keep the body stuck to steep angles.</p>
+  </section>
+
+  <section class="section">
+    <h2>Conclusion</h2>
+    <p>Motion on an inclined plane boils down to two key relations:</p>
+    <div class="formula">a = g (sin θ − μk cos θ)</div>
+    <div class="formula">tan θ &gt; μs → sliding begins</div>
+    <p>These formulas link angle, friction, speed, and time; in the simulator you can tune parameters and observe their effects.</p>
+  </section>
+</main>
+
+<section class="theory-footer-anim">
+  <div class="anim-card ip-wrap">
+    <div class="ip-plane">
+      <div class="ip-block"></div>
+    </div>
+    <p class="anim-caption">Along the slope — a = g(sinθ − μ<sub>k</sub>cosθ)</p>
+  </div>
+</section>
+{% endblock %}

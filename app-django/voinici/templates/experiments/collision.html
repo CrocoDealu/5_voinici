@@ -1,0 +1,15 @@
+{# templates/experiments/collision.html #}
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Collision{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4 text-center">Collision</h1>
+<iframe
+  src="{% static 'interactives/collision/collision.html' %}"
+  width="1152" height="648"
+  class="d-block mx-auto mb-5"
+  style="border:0"
+  allowfullscreen>
+</iframe>
+{% endblock %}
+

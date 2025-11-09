@@ -3,9 +3,11 @@
 // - Renders questions, captures answers, and POSTs compact attempt to /feedback/simple
 // - Shows feedback in the page
 
+
 // Backend endpoint for feedback. Browsers cannot connect to 0.0.0.0; use localhost instead.
 // If you need to point to a different host, set window.QFE_API_BASE before this script runs.
 const API_BASE = window.QFE_API_BASE || 'http://127.0.0.1:5000'; // change if your service runs elsewhere
+
 
 async function fetchQuiz() {
   const res = await fetch(`/static/quiz-data/${quizFile}`);
@@ -15,16 +17,20 @@ async function fetchQuiz() {
   return quiz;
 }
 
+
 function renderQuiz(quiz) {
   const container = document.getElementById('quiz-container');
   container.innerHTML = '';
+
 
   const title = document.createElement('h2');
   title.textContent = quiz.title || 'Quiz';
   container.appendChild(title);
 
+
   const form = document.createElement('form');
   form.id = 'quiz-form';
+
 
   quiz.questions.forEach((q, idx) => {
     const wrap = document.createElement('div');
@@ -32,10 +38,12 @@ function renderQuiz(quiz) {
     wrap.classList.add('question');
     wrap.dataset.qidx = idx;
 
+
     const qn = document.createElement('div');
     qn.className = 'question-text';
     qn.innerHTML = `<strong>Q${idx + 1}:</strong> ${q.text}`;
     wrap.appendChild(qn);
+
 
     if (q.answers && q.answers.length) {
       const answersDiv = document.createElement('div');
@@ -59,8 +67,10 @@ function renderQuiz(quiz) {
           if (qwrap) qwrap.classList.remove('unanswered');
         });
 
+
         // If this radio is pre-checked, mark the label
         if (input.checked) label.classList.add('selected');
+
 
         answersDiv.appendChild(label);
       });
@@ -74,19 +84,24 @@ function renderQuiz(quiz) {
       wrap.appendChild(input);
     }
 
+
     // store question id in data attribute for compact submission
     wrap.dataset.qid = q.id || '';
 
+
     form.appendChild(wrap);
   });
+
 
   container.appendChild(form);
   document.getElementById('submit-btn').disabled = false;
 }
 
+
 function collectAttempt(quiz) {
   const form = document.getElementById('quiz-form');
   const answers = [];
+
 
   quiz.questions.forEach((q, idx) => {
     const qid = q.id || null;
@@ -100,6 +115,7 @@ function collectAttempt(quiz) {
       if (input) user_index = input.value || '';
     }
 
+
     answers.push({
       id: qid,
       text: q.text,
@@ -109,11 +125,13 @@ function collectAttempt(quiz) {
     });
   });
 
+
   return {
     title: quiz.title,
     questions: answers
   };
 }
+
 
 function validateAllAnswered(quiz) {
   const form = document.getElementById('quiz-form');
@@ -133,30 +151,29 @@ function validateAllAnswered(quiz) {
   return unanswered;
 }
 
+
 async function submitAttempt(attempt) {
-    const res = await fetch(`${API_BASE}/feedback`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(attempt)
-    });
-
-    // If backend responds with non-2xx, don't forward raw response details to UI.
-    if (!res.ok) {
-      // throw a generic error so the caller can show a friendly message
-      throw new Error('AI_UNAVAILABLE');
-    }
-
-    return res.json();
+  const res = await fetch(`${API_BASE}/feedback`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    // Wrap attempt under top-level "quiz"
+    body: JSON.stringify({ quiz: attempt })
+  });
+  if (!res.ok) throw new Error('AI_UNAVAILABLE');
+  return res.json();
 }
+
 
 const urlParams = new URLSearchParams(window.location.search);
 const quizFile = urlParams.get('quiz') || 'collision_quiz.json';
+
 
 async function init() {
   try {
     const quiz = await fetchQuiz();
     window.__currentQuiz = quiz;
     renderQuiz(quiz);
+
 
     document.getElementById('submit-btn').addEventListener('click', async () => {
       try {
@@ -177,13 +194,73 @@ async function init() {
           return;
         }
 
+
         document.getElementById('submit-btn').disabled = true;
         document.getElementById('feedback').textContent = 'Submitting…';
         const attempt = collectAttempt(quiz);
         const resp = await submitAttempt(attempt);
-        // If backend returns an object with a 'feedback' field, show that; otherwise show the full response.
+
+        // ----- Option 2 integration: show overall feedback + annotate each question inline -----
+
+        // Show overall feedback text at the top (keep existing behavior)
         const feedbackText = (resp && resp.feedback) ? resp.feedback : JSON.stringify(resp, null, 2);
         document.getElementById('feedback').textContent = feedbackText;
+
+        // Annotate each question inline with correctness
+        if (resp && Array.isArray(resp.question_feedback)) {
+          let firstIncorrectAdded = false;
+
+          resp.question_feedback.forEach((qf, i) => {
+            // Map response item to rendered question index:
+            // 1) prefer question_id match; 2) fall back to array index
+            let idx = i;
+            if (qf.question_id != null && quiz && Array.isArray(quiz.questions)) {
+              const found = quiz.questions.findIndex(q => String(q.id) === String(qf.question_id));
+              if (found !== -1) idx = found;
+            }
+
+            const qDiv = document.querySelector(`.question[data-qidx="${idx}"]`);
+            if (!qDiv) return;
+
+            // Remove any previous marker
+            const old = qDiv.querySelector('.q-result');
+            if (old) old.remove();
+
+            // Build a new marker
+            const marker = document.createElement('div');
+            marker.className = 'q-result mt-2';
+            marker.style.fontWeight = '600';
+
+            if (qf.is_correct) {
+              marker.style.color = '#22c55e';
+              marker.textContent = '✓ Correct';
+            } else {
+              marker.style.color = '#ef4444';
+
+              // Try to show the correct answer text; fall back to index if necessary
+              const correctIdx = qf.correct_answer_index;
+              let correctText = qf.correct_answer_text || null;
+              if (!correctText && quiz && quiz.questions[idx] && Array.isArray(quiz.questions[idx].options)) {
+                if (typeof correctIdx === 'number' && quiz.questions[idx].options[correctIdx] != null) {
+                  correctText = quiz.questions[idx].options[correctIdx];
+                }
+              }
+
+              marker.textContent = `✗ Wrong. Correct: ${correctText ?? `option ${correctIdx}`}`;
+
+              // Optionally scroll the first incorrect into view for visibility
+              if (!firstIncorrectAdded) {
+                qDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstIncorrectAdded = true;
+              }
+            }
+
+            qDiv.appendChild(marker);
+          });
+        }
+
+        // ----- end Option 2 -----
+
       } catch (err) {
         // Don't show internal error or raw response to the user. Show a friendly message instead.
         document.getElementById('feedback').textContent = "Our AI isn't available at the moment";
@@ -192,6 +269,7 @@ async function init() {
       }
     });
 
+
     document.getElementById('clear-btn').addEventListener('click', () => {
       const form = document.getElementById('quiz-form');
       if (!form) return;
@@ -199,10 +277,15 @@ async function init() {
       form.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
       form.querySelectorAll('input[type=text]').forEach(i => i.value = '');
       document.getElementById('feedback').textContent = '(no feedback yet)';
+      // Clear inline result markers
+      document.querySelectorAll('.q-result').forEach(el => el.remove());
+      // Clear unanswered markers
+      document.querySelectorAll('.question.unanswered').forEach(e => e.classList.remove('unanswered'));
     });
   } catch (err) {
     document.getElementById('quiz-container').textContent = 'Could not load quiz: ' + err.message;
   }
 }
+
 
 init();

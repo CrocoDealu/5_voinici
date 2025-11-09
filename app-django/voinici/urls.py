@@ -12,4 +12,7 @@ urlpatterns = [
     path('theory/collision/', views.collision_view, name='collision'),
     path('theory/pendulum/', views.pendulum_view, name='pendulum'),
     path('quiz/', views.quiz_view, name='quiz'),  # generic quiz path 
+    path('pendulum/', views.pendulum, name='exp_pendulum'),
+    path('inclined-plane/', views.inclined_plane, name='exp_inclined_plane'),
+    path('collision/', views.collision, name='exp_collision'),
 ]

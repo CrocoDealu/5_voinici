@@ -1,227 +1,152 @@
+{% extends 'base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="en">
 
-<head>
-    <meta charset="utf-8" />
-    <title>VirtuLab — Collisions Theory</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/theory.css' %}" />
+  <style>
+    .navbar-nav,
+    .navbar-nav li {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+  </style>
+{% endblock %}
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+{% block content %}
+<main class="page">
+    <h1 class="title">Collisions — momentum, energy and restitution</h1>
+    <p class="subtitle">Two-sphere collisions: what is conserved, how to classify collisions, and how to compute outcomes</p>
 
-    <!-- Global styles (navbar, starfield, buttons) -->
-    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <div class="lead">
+        In this chapter we study the collision of two rigid spheres on a low-friction surface. We focus on linear
+        momentum conservation, the role of kinetic energy, and the coefficient of restitution that quantifies how “bouncy” a
+        collision is.
+        The model below is idealized (no rotation, negligible air drag, contact time very small).
+    </div>
 
-    <!-- Page-specific theory styling -->
-    <link rel="stylesheet" href="{% static 'css/theory.css' %}" />
-
-    <style>
-        .navbar-nav,
-        .navbar-nav li {
-            list-style: none;
-            padding-left: 0;
-            margin: 0;
-        }
-    </style>
-</head>
-
-<body class="bg-black text-light">
-
-    <!-- Starfield -->
-    <div class="starfield"><canvas id="stars"></canvas></div>
-
-    <!-- NAVBAR (same as on home) -->
-    <nav class="navbar navbar-expand-lg navbar-dark border-bottom nav-glow">
-        <div class="container">
-            <a class="navbar-brand fw-bold brand" href="/">VirtuLab</a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-                aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div id="mainNav" class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto align-items-lg-center">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Experiments</a>
-                        <ul class="dropdown-menu dropdown-dark">
-                            <li><a class="dropdown-item" href="#">Pendulum</a></li>
-                            <li><a class="dropdown-item" href="#">Collision</a></li>
-                            <li><a class="dropdown-item" href="#">Inclined Plane</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tests</a>
-                        <ul class="dropdown-menu dropdown-dark">
-                            <li><a class="dropdown-item" href="#">Pendulum Quiz</a></li>
-                            <li><a class="dropdown-item" href="#">Collision Quiz</a></li>
-                            <li><a class="dropdown-item" href="#">Inclined Plane Quiz</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Theory</a>
-                        <ul class="dropdown-menu dropdown-dark">
-                            <li><a class="dropdown-item" href="/theory/inclined_plane/">Inclined Plane Theory</a></li>
-                            <li><a class="dropdown-item" href="/theory/collision/">Collisions Theory</a></li>
-                            <li><a class="dropdown-item active" href="/theory/pendulum/">Pendulum Theory</a></li>
-                            <!-- poti adauga si Pendulum ulterior -->
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- CONTENT -->
-    <main class="page">
-        <h1 class="title">Collisions — momentum, energy and restitution</h1>
-        <p class="subtitle">Two-sphere collisions: what is conserved, how to classify collisions, and how to compute
-            outcomes</p>
-
-        <div class="lead">
-            In this chapter we study the collision of two rigid spheres on a low-friction surface. We focus on linear
-            momentum
-            conservation, the role of kinetic energy, and the coefficient of restitution that quantifies how “bouncy” a
-            collision is.
-            The model below is idealized (no rotation, negligible air drag, contact time very small).
-        </div>
-
-        <section class="section">
-            <h2>System model</h2>
-            <p>
-                Consider two spheres with masses <em>m1</em> and <em>m2</em>, initial velocities
-                <em>u1</em> and <em>u2</em> (vectors), and final velocities <em>v1</em> and <em>v2</em>.
-                Collisions can be analyzed along the line of impact (the line joining centers at contact).
-            </p>
-            <p>
-                Assumptions for the basic model: rigid spheres, central impact (no spin), flat surface with negligible
-                friction.
-                We first solve the 1D case (collinear velocities), then the 2D vector case.
-            </p>
-        </section>
-
-        <section class="section">
-            <h2>Conservation of linear momentum</h2>
-            <p>
-                Linear momentum is conserved for the system (in absence of external impulses):
-            </p>
-            <div class="formula">m1 u1 + m2 u2 = m1 v1 + m2 v2</div>
-            <p>
-                This relation is vectorial in 2D/3D. In 1D (motion on a straight line), it is a scalar equation.
-            </p>
-        </section>
-
-        <section class="section">
-            <h2>Coefficient of restitution (e)</h2>
-            <p>
-                The coefficient of restitution <em>e</em> measures “bounciness”. It is defined along the line of impact
-                as:
-            </p>
-            <div class="formula">e = (relative speed of separation) / (relative speed of approach)</div>
-            <div class="formula">e = |v2 − v1| / |u1 − u2| (1D, with velocities on the same line)</div>
-            <p>
-                Typical values: <em>e = 1</em> elastic collision (kinetic energy conserved),
-                <em>0 &lt; e &lt; 1</em> inelastic (some energy lost),
-                <em>e = 0</em> perfectly inelastic (objects move together after impact).
-            </p>
-        </section>
-
-        <section class="section">
-            <h2>1D outcomes (collinear velocities)</h2>
-            <p>
-                Using momentum conservation and the restitution relation, the final velocities in 1D are:
-            </p>
-            <div class="formula">
-                v1 = ( m1 − e m2 ) / ( m1 + m2 ) · u1 + ( 1 + e ) m2 / ( m1 + m2 ) · u2
-            </div>
-            <div class="formula">
-                v2 = ( 1 + e ) m1 / ( m1 + m2 ) · u1 + ( m2 − e m1 ) / ( m1 + m2 ) · u2
-            </div>
-            <p>
-                Special case: elastic collision (<em>e = 1</em>).
-            </p>
-            <div class="formula">
-                v1 = ( m1 − m2 ) / ( m1 + m2 ) · u1 + 2 m2 / ( m1 + m2 ) · u2
-            </div>
-            <div class="formula">
-                v2 = 2 m1 / ( m1 + m2 ) · u1 + ( m2 − m1 ) / ( m1 + m2 ) · u2
-            </div>
-            <p>
-                For equal masses and <em>e = 1</em>, the spheres simply exchange their velocities.
-            </p>
-        </section>
-
-        <section class="section">
-            <h2>Energy considerations</h2>
-            <p>
-                In elastic collisions, kinetic energy is conserved:
-            </p>
-            <div class="formula">½ m1 |u1|² + ½ m2 |u2|² = ½ m1 |v1|² + ½ m2 |v2|²</div>
-            <p>
-                For inelastic collisions (<em>e &lt; 1</em>) kinetic energy decreases, while momentum remains conserved.
-            </p>
-        </section>
-
-        <section class="section">
-            <h2>2D collisions — vector approach</h2>
-            <p>
-                In 2D, decompose velocities into components along the line of impact (normal) and perpendicular to it
-                (tangential).
-                Only the normal components change according to restitution; tangential components remain unchanged (for
-                smooth spheres).
-            </p>
-            <ol>
-                <li>Compute the unit normal at contact: <em>n = (r2 − r1) / |r2 − r1|</em>.</li>
-                <li>Project velocities on <em>n</em>: <em>u1n = u1·n</em>, <em>u2n = u2·n</em>. Tangential parts stay
-                    the same.</li>
-                <li>Apply the 1D formulas to <em>u1n, u2n</em> using <em>e</em>, get <em>v1n, v2n</em>.</li>
-                <li>Reconstruct final vectors: <em>v1 = v1n n + u1t</em>, <em>v2 = v2n n + u2t</em>, where <em>u1t = u1
-                        − (u1·n) n</em>.</li>
-            </ol>
-        </section>
-
-        <section class="section">
-            <h2>Center-of-mass (COM) frame — intuition</h2>
-            <p>
-                In the COM frame, momentum is zero before and after collision. For elastic impacts, speeds relative to
-                COM are preserved,
-                but directions reflect along the normal. This often simplifies reasoning and debugging.
-            </p>
-        </section>
-
-        <section class="section">
-            <h2>Lab tips for the simulation</h2>
-            <ul>
-                <li>Start with 1D head-on collisions to verify formulas (set both along the same axis).</li>
-                <li>Vary <em>e</em> from 0 to 1 to see how separation speed changes.</li>
-                <li>Try equal masses vs very different masses to build intuition.</li>
-                <li>For 2D, visualize normal and tangential components at impact.</li>
-            </ul>
-        </section>
-    </main>
-
-    <!-- Collision animation -->
-    <section class="theory-footer-anim">
-        <div class="anim-card coll-wrap">
-            <div class="track">
-                <div class="ball ball-left"></div>
-                <div class="ball ball-right"></div>
-            </div>
-            <p class="anim-caption">Elastic collision — momentum conserved, speed exchanged in 1D (m₁ = m₂)</p>
-        </div>
+    <section class="section">
+        <h2>System model</h2>
+        <p>
+            Consider two spheres with masses <em>m1</em> and <em>m2</em>, initial velocities
+            <em>u1</em> and <em>u2</em> (vectors), and final velocities <em>v1</em> and <em>v2</em>.
+            Collisions can be analyzed along the line of impact (the line joining centers at contact).
+        </p>
+        <p>
+            Assumptions for the basic model: rigid spheres, central impact (no spin), flat surface with negligible
+            friction.
+            We first solve the 1D case (collinear velocities), then the 2D vector case.
+        </p>
     </section>
 
+    <section class="section">
+        <h2>Conservation of linear momentum</h2>
+        <p>
+            Linear momentum is conserved for the system (in absence of external impulses):
+        </p>
+        <div class="formula">m1 u1 + m2 u2 = m1 v1 + m2 v2</div>
+        <p>
+            This relation is vectorial in 2D/3D. In 1D (motion on a straight line), it is a scalar equation.
+        </p>
+    </section>
 
-    <footer class="py-4"></footer>
+    <section class="section">
+        <h2>Coefficient of restitution (e)</h2>
+        <p>
+            The coefficient of restitution <em>e</em> measures “bounciness”. It is defined along the line of impact
+            as:
+        </p>
+        <div class="formula">e = (relative speed of separation) / (relative speed of approach)</div>
+        <div class="formula">e = |v2 − v1| / |u1 − u2| (1D, with velocities on the same line)</div>
+        <p>
+            Typical values: <em>e = 1</em> elastic collision (kinetic energy conserved),
+            <em>0 &lt; e &lt; 1</em> inelastic (some energy lost),
+            <em>e = 0</em> perfectly inelastic (objects move together after impact).
+        </p>
+    </section>
 
-    <!-- JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/home.js' %}"></script>
-</body>
+    <section class="section">
+        <h2>1D outcomes (collinear velocities)</h2>
+        <p>
+            Using momentum conservation and the restitution relation, the final velocities in 1D are:
+        </p>
+        <div class="formula">
+            v1 = ( m1 − e m2 ) / ( m1 + m2 ) · u1 + ( 1 + e ) m2 / ( m1 + m2 ) · u2
+        </div>
+        <div class="formula">
+            v2 = ( 1 + e ) m1 / ( m1 + m2 ) · u1 + ( m2 − e m1 ) / ( m1 + m2 ) · u2
+        </div>
+        <p>
+            Special case: elastic collision (<em>e = 1</em>).
+        </p>
+        <div class="formula">
+            v1 = ( m1 − m2 ) / ( m1 + m2 ) · u1 + 2 m2 / ( m1 + m2 ) · u2
+        </div>
+        <div class="formula">
+            v2 = 2 m1 / ( m1 + m2 ) · u1 + ( m2 − m1 ) / ( m1 + m2 ) · u2
+        </div>
+        <p>
+            For equal masses and <em>e = 1</em>, the spheres simply exchange their velocities.
+        </p>
+    </section>
 
-</html>
+    <section class="section">
+        <h2>Energy considerations</h2>
+        <p>
+            In elastic collisions, kinetic energy is conserved:
+        </p>
+        <div class="formula">½ m1 |u1|² + ½ m2 |u2|² = ½ m1 |v1|² + ½ m2 |v2|²</div>
+        <p>
+            For inelastic collisions (<em>e &lt; 1</em>) kinetic energy decreases, while momentum remains conserved.
+        </p>
+    </section>
+
+    <section class="section">
+        <h2>2D collisions — vector approach</h2>
+        <p>
+            In 2D, decompose velocities into components along the line of impact (normal) and perpendicular to it
+            (tangential).
+            Only the normal components change according to restitution; tangential components remain unchanged (for
+            smooth spheres).
+        </p>
+        <ol>
+            <li>Compute the unit normal at contact: <em>n = (r2 − r1) / |r2 − r1|</em>.</li>
+            <li>Project velocities on <em>n</em>: <em>u1n = u1·n</em>, <em>u2n = u2·n</em>. Tangential parts stay
+                the same.</li>
+            <li>Apply the 1D formulas to <em>u1n, u2n</em> using <em>e</em>, get <em>v1n, v2n</em>.</li>
+            <li>Reconstruct final vectors: <em>v1 = v1n n + u1t</em>, <em>v2 = v2n n + u2t</em>, where <em>u1t = u1
+                    − (u1·n) n</em>.</li>
+        </ol>
+    </section>
+
+    <section class="section">
+        <h2>Center-of-mass (COM) frame — intuition</h2>
+        <p>
+            In the COM frame, momentum is zero before and after collision. For elastic impacts, speeds relative to
+            COM are preserved,
+            but directions reflect along the normal. This often simplifies reasoning and debugging.
+        </p>
+    </section>
+
+    <section class="section">
+        <h2>Lab tips for the simulation</h2>
+        <ul>
+            <li>Start with 1D head-on collisions to verify formulas (set both along the same axis).</li>
+            <li>Vary <em>e</em> from 0 to 1 to see how separation speed changes.</li>
+            <li>Try equal masses vs very different masses to build intuition.</li>
+            <li>For 2D, visualize normal and tangential components at impact.</li>
+        </ul>
+    </section>
+</main>
+
+<!-- Collision animation -->
+<section class="theory-footer-anim">
+    <div class="anim-card coll-wrap">
+        <div class="track">
+            <div class="ball ball-left"></div>
+            <div class="ball ball-right"></div>
+        </div>
+        <p class="anim-caption">Elastic collision — momentum conserved, speed exchanged in 1D (m₁ = m₂)</p>
+    </div>
+</section>
+{% endblock %}
